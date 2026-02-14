@@ -4,7 +4,6 @@ public class CreateOrganizationRequest {
 
     private String name;
 
-    // getters & setters
     public String getName() {
         return name;
     }

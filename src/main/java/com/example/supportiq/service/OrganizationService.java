@@ -15,14 +15,19 @@ public class OrganizationService {
         this.organizationRepository = organizationRepository;
     }
 
+    /**
+     * Create a new organization
+     */
     public Organization createOrganization(String name) {
         Organization org = new Organization();
         org.setName(name);
         return organizationRepository.save(org);
     }
 
+    /**
+     * Get all organizations
+     */
     public List<Organization> getAllOrganizations() {
         return organizationRepository.findAll();
     }
 }
-

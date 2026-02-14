@@ -32,13 +32,17 @@ public class UserService {
                            UserRole role,
                            Long organizationId) {
 
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
 
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password)); // ✅ hashing here only
+        user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
         user.setOrganization(organization);
 
@@ -49,7 +53,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    // ✅ STEP 2: Entity → DTO mapping
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
+    public List<User> getUsersByOrganization(Long organizationId) {
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> user.getOrganization().getId().equals(organizationId))
+                .toList();
+    }
+
     public UserResponse toResponse(User user) {
         UserResponse dto = new UserResponse();
         dto.setId(user.getId());

@@ -1,6 +1,8 @@
 package com.example.supportiq.controller;
 
 import com.example.supportiq.entity.Organization;
+
+import com.example.supportiq.dto.CreateOrganizationRequest;
 import com.example.supportiq.service.OrganizationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +18,9 @@ public class OrganizationController {
         this.organizationService = organizationService;
     }
 
-    // ✅ PROPER way (POST)
     @PostMapping
-    public Organization createOrganization(@RequestBody Organization organization) {
-        return organizationService.createOrganization(organization.getName());
-    }
-
-    // TEMPORARY: GET create (can remove later)
-    @GetMapping("/create")
-    public Organization createOrganizationViaGet(@RequestParam String name) {
-        return organizationService.createOrganization(name);
+    public Organization createOrganization(@RequestBody CreateOrganizationRequest request) {
+        return organizationService.createOrganization(request.getName());
     }
 
     @GetMapping
@@ -33,4 +28,3 @@ public class OrganizationController {
         return organizationService.getAllOrganizations();
     }
 }
-
