@@ -1,28 +1,62 @@
 package com.example.supportiq.config;
 
+import com.example.supportiq.Filter.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
-                .csrf(csrf -> csrf.disable()) // required for Postman & H2
-                .headers(headers -> headers.frameOptions(frame -> frame.disable())) // 🔥 REQUIRED FOR H2
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2-console/**").permitAll() // 🔥 allow H2
-                        .requestMatchers("/api/**").permitAll()        // 🔥 allow APIs
-                        .anyRequest().permitAll()
+                // Disable CSRF
+                .csrf(csrf -> csrf.disable())
+
+                // Disable CORS for testing
+                .cors(cors -> cors.disable())
+
+                // Stateless session
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .httpBasic(basic -> basic.disable())
-                .formLogin(form -> form.disable());
+
+                // Authorization rules
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints - allow without authentication
+                        .requestMatchers("/api/auth/register").permitAll()
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/api/organizations/**").permitAll() // Temporary for testing
+
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated()
+                )
+
+                // Disable HTTP Basic and Form Login
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(formLogin -> formLogin.disable())
+
+                // Add JWT filter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // Allow H2 console frames
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.disable())
+                );
 
         return http.build();
     }
@@ -32,4 +66,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
