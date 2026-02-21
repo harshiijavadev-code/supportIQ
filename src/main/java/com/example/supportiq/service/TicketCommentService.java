@@ -1,5 +1,5 @@
 package com.example.supportiq.service;
-
+import com.example.supportiq.exception.ResourceNotFoundException;
 import com.example.supportiq.entity.Ticket;
 import com.example.supportiq.entity.TicketComment;
 import com.example.supportiq.entity.User;
@@ -31,11 +31,10 @@ public class TicketCommentService {
     public TicketComment addComment(Long ticketId, Long userId, String message) {
         // Verify ticket exists
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket", ticketId));
 
-        // Verify user exists
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
         // Create the comment
         TicketComment comment = new TicketComment();
@@ -58,7 +57,7 @@ public class TicketCommentService {
      */
     public void deleteComment(Long commentId) {
         if (!ticketCommentRepository.existsById(commentId)) {
-            throw new RuntimeException("Comment not found");
+            throw new ResourceNotFoundException("Comment", commentId);
         }
         ticketCommentRepository.deleteById(commentId);
     }

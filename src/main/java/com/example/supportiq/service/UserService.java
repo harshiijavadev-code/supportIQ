@@ -4,6 +4,8 @@ import com.example.supportiq.dto.UserResponse;
 import com.example.supportiq.entity.Organization;
 import com.example.supportiq.entity.User;
 import com.example.supportiq.entity.enums.UserRole;
+import com.example.supportiq.exception.DuplicateResourceException;
+import com.example.supportiq.exception.ResourceNotFoundException;
 import com.example.supportiq.repository.OrganizationRepository;
 import com.example.supportiq.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,13 +34,16 @@ public class UserService {
                            UserRole role,
                            Long organizationId) {
 
+        // Check duplicate email
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new RuntimeException("Email already registered");
+            throw new DuplicateResourceException("Email already registered");
         }
 
+        // Find organization
         Organization organization = organizationRepository.findById(organizationId)
-                .orElseThrow(() -> new RuntimeException("Organization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Organization", organizationId));
 
+        // Create user
         User user = new User();
         user.setName(name);
         user.setEmail(email);
@@ -55,7 +60,7 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User", id));
     }
 
     public List<User> getUsersByOrganization(Long organizationId) {
