@@ -4,6 +4,7 @@ import com.example.supportiq.entity.Organization;
 
 import com.example.supportiq.dto.CreateOrganizationRequest;
 import com.example.supportiq.service.OrganizationService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class OrganizationController {
     }
 
     @PostMapping
-    public Organization createOrganization(@RequestBody CreateOrganizationRequest request) {
+    public Organization createOrganization( @Valid @RequestBody CreateOrganizationRequest request) {
         return organizationService.createOrganization(request.getName());
     }
 

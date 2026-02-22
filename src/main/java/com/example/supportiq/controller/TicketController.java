@@ -5,6 +5,7 @@ import com.example.supportiq.dto.UpdateTicketStatusRequest;
 import com.example.supportiq.dto.AssignTicketRequest;
 import com.example.supportiq.entity.Ticket;
 import com.example.supportiq.service.TicketService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class TicketController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Ticket createTicket(@RequestBody CreateTicketRequest request) {
+    public Ticket createTicket( @Valid @RequestBody CreateTicketRequest request) {
         return ticketService.createTicket(
                 request.getTitle(),
                 request.getDescription(),

@@ -3,6 +3,7 @@ package com.example.supportiq.controller;
 import com.example.supportiq.dto.CreateCommentRequest;
 import com.example.supportiq.entity.TicketComment;
 import com.example.supportiq.service.TicketCommentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class TicketCommentController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TicketComment addComment(@PathVariable Long ticketId, @RequestBody CreateCommentRequest request) {
+    public TicketComment addComment(@PathVariable Long ticketId,@Valid @RequestBody CreateCommentRequest request) {
         return ticketCommentService.addComment(ticketId, request.getUserId(), request.getMessage());
     }
 
