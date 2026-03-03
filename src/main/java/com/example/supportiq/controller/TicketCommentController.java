@@ -5,6 +5,7 @@ import com.example.supportiq.entity.TicketComment;
 import com.example.supportiq.service.TicketCommentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,30 +21,30 @@ public class TicketCommentController {
     }
 
     /**
-     * Add a comment to a ticket
-     * POST /api/tickets/1/comments
+     * Add comment - All authenticated users
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TicketComment addComment(@PathVariable Long ticketId,@Valid @RequestBody CreateCommentRequest request) {
+    @PreAuthorize("isAuthenticated()")
+    public TicketComment addComment(@PathVariable Long ticketId, @Valid @RequestBody CreateCommentRequest request) {
         return ticketCommentService.addComment(ticketId, request.getUserId(), request.getMessage());
     }
 
     /**
-     * Get all comments for a ticket
-     * GET /api/tickets/1/comments
+     * Get comments - All authenticated users
      */
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public List<TicketComment> getComments(@PathVariable Long ticketId) {
         return ticketCommentService.getCommentsByTicket(ticketId);
     }
 
     /**
-     * Delete a comment
-     * DELETE /api/tickets/1/comments/5
+     * Delete comment - Only Admins
      */
     @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteComment(@PathVariable Long ticketId, @PathVariable Long commentId) {
         ticketCommentService.deleteComment(commentId);
     }

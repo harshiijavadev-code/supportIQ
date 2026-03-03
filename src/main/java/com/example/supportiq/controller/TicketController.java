@@ -7,6 +7,7 @@ import com.example.supportiq.entity.Ticket;
 import com.example.supportiq.service.TicketService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +23,12 @@ public class TicketController {
     }
 
     /**
-     * Create a new ticket
-     * POST /api/tickets
+     * Create ticket - All authenticated users can create tickets
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Ticket createTicket( @Valid @RequestBody CreateTicketRequest request) {
+    @PreAuthorize("isAuthenticated()")
+    public Ticket createTicket(@Valid @RequestBody CreateTicketRequest request) {
         return ticketService.createTicket(
                 request.getTitle(),
                 request.getDescription(),
@@ -38,10 +39,10 @@ public class TicketController {
     }
 
     /**
-     * Get all tickets (optionally filtered by organization)
-     * GET /api/tickets?organizationId=1
+     * Get all tickets - Agents and Admins only
      */
     @GetMapping
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
     public List<Ticket> getAllTickets(@RequestParam(required = false) Long organizationId) {
         if (organizationId != null) {
             return ticketService.getTicketsByOrganization(organizationId);
@@ -50,38 +51,38 @@ public class TicketController {
     }
 
     /**
-     * Get a specific ticket by ID
-     * GET /api/tickets/1
+     * Get ticket by ID - All authenticated users
      */
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public Ticket getTicketById(@PathVariable Long id) {
         return ticketService.getTicketById(id);
     }
 
     /**
-     * Assign ticket to an agent
-     * PUT /api/tickets/1/assign
+     * Assign ticket - Only Agents and Admins
      */
     @PutMapping("/{id}/assign")
-    public Ticket assignTicket(@PathVariable Long id, @RequestBody AssignTicketRequest request) {
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
+    public Ticket assignTicket(@PathVariable Long id, @Valid @RequestBody AssignTicketRequest request) {
         return ticketService.assignTicket(id, request.getAgentId());
     }
 
     /**
-     * Update ticket status
-     * PUT /api/tickets/1/status
+     * Update ticket status - Only Agents and Admins
      */
     @PutMapping("/{id}/status")
-    public Ticket updateTicketStatus(@PathVariable Long id, @RequestBody UpdateTicketStatusRequest request) {
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
+    public Ticket updateTicketStatus(@PathVariable Long id, @Valid @RequestBody UpdateTicketStatusRequest request) {
         return ticketService.updateTicketStatus(id, request.getStatus());
     }
 
     /**
-     * Delete a ticket (soft delete recommended in production)
-     * DELETE /api/tickets/1
+     * Delete ticket - Only Admins
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
     }

@@ -4,7 +4,9 @@ import com.example.supportiq.dto.CreateUserRequest;
 import com.example.supportiq.dto.UserResponse;
 import com.example.supportiq.entity.User;
 import com.example.supportiq.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +23,12 @@ public class UserController {
     }
 
     /**
-     * Create a new user
-     * POST /api/users
+     * Create user - Only Admins
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createUser(@RequestBody CreateUserRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createUser(@Valid @RequestBody CreateUserRequest request) {
         User user = userService.createUser(
                 request.getName(),
                 request.getEmail(),
@@ -38,10 +40,10 @@ public class UserController {
     }
 
     /**
-     * Get all users (without passwords!)
-     * GET /api/users
+     * Get all users - Agents and Admins only
      */
     @GetMapping
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers()
                 .stream()
@@ -50,20 +52,20 @@ public class UserController {
     }
 
     /**
-     * Get a specific user by ID
-     * GET /api/users/1
+     * Get user by ID - All authenticated users
      */
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public UserResponse getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return userService.toResponse(user);
     }
 
     /**
-     * Get users by organization
-     * GET /api/users?organizationId=1
+     * Get users by organization - Agents and Admins only
      */
     @GetMapping("/organization/{organizationId}")
+    @PreAuthorize("hasAnyRole('AGENT', 'ADMIN')")
     public List<UserResponse> getUsersByOrganization(@PathVariable Long organizationId) {
         return userService.getUsersByOrganization(organizationId)
                 .stream()
@@ -71,4 +73,3 @@ public class UserController {
                 .collect(Collectors.toList());
     }
 }
-
