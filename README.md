@@ -4,7 +4,7 @@ An intelligent SaaS platform that revolutionizes customer support by using AI to
 
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.2-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-blue)
+
 
 ## 🌟 Features
 
