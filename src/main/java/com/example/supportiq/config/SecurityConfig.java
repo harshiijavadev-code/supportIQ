@@ -1,4 +1,5 @@
 package com.example.supportiq.config;
+import com.example.supportiq.entity.enums.UserRole;
 
 import com.example.supportiq.Filter.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,41 +25,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF
                 .csrf(csrf -> csrf.disable())
-
-                // Disable CORS for testing
+                .headers(headers ->
+                        headers.frameOptions(frame -> frame.disable())
+                )
                 .cors(cors -> cors.disable())
-
-                // Stateless session
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                // Authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints - allow without authentication
-                        .requestMatchers("/api/auth/register").permitAll()
-                        .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/ai/**").permitAll()
+                        .requestMatchers("/api/organizations/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/organizations/**").permitAll() // Temporary for testing
 
-                        // All other endpoints require authentication
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
                         .anyRequest().authenticated()
                 )
-
-                // Disable HTTP Basic and Form Login
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
-
-                // Add JWT filter
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-
-                // Allow H2 console frames
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
-                );
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

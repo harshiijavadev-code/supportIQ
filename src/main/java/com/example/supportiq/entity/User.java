@@ -1,4 +1,5 @@
 package com.example.supportiq.entity;
+import com.example.supportiq.entity.enums.UserRole;
 
 import com.example.supportiq.entity.enums.UserRole;
 import jakarta.persistence.*;

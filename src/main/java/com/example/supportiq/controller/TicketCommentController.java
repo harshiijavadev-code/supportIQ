@@ -2,7 +2,7 @@ package com.example.supportiq.controller;
 
 import com.example.supportiq.dto.CreateCommentRequest;
 import com.example.supportiq.entity.TicketComment;
-import com.example.supportiq.service.TicketCommentService;
+import com.example.supportiq.Service.TicketCommentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -4,13 +4,12 @@ import com.example.supportiq.dto.LoginRequest;
 import com.example.supportiq.dto.LoginResponse;
 import com.example.supportiq.dto.RegisterRequest;
 import com.example.supportiq.entity.User;
-import com.example.supportiq.service.AuthenticationService;
-import com.example.supportiq.service.UserService;
+import com.example.supportiq.Service.AuthenticationService;
+import com.example.supportiq.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")

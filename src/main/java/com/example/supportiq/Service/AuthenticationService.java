@@ -1,4 +1,4 @@
-package com.example.supportiq.service;
+package com.example.supportiq.Service;
 
 import com.example.supportiq.entity.User;
 import com.example.supportiq.repository.UserRepository;

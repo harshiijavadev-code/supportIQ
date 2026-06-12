@@ -3,7 +3,7 @@ package com.example.supportiq.controller;
 import com.example.supportiq.dto.CreateUserRequest;
 import com.example.supportiq.dto.UserResponse;
 import com.example.supportiq.entity.User;
-import com.example.supportiq.service.UserService;
+import com.example.supportiq.Service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

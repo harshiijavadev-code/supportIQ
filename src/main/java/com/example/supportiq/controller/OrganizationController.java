@@ -2,7 +2,7 @@ package com.example.supportiq.controller;
 
 import com.example.supportiq.dto.CreateOrganizationRequest;
 import com.example.supportiq.entity.Organization;
-import com.example.supportiq.service.OrganizationService;
+import com.example.supportiq.Service.OrganizationService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
